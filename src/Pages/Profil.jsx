@@ -1,8 +1,12 @@
 import React from 'react';
+import PageProfilStyles from '../Styles/pageProfil.styled';
+
 
 
 export default function Profil() {
   return (
-    <div>Profil</div>
+    <PageProfilStyles>
+      Hello
+    </PageProfilStyles>
   )
 }
