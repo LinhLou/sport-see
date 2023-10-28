@@ -19,7 +19,7 @@ const LayoutStyled = styled.div`
       align-items: center;
     }
     nav{
-      gap:219px;
+      /* gap:219px; */
       a{
         text-decoration: none;
         color:white;
