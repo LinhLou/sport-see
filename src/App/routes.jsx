@@ -1,5 +1,8 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import Profil from '../Pages/Profil';
+import Profil, { userInfosLoader } from '../Pages/Profil';
+import Acceuil from '../Pages/Acceuil';
+import Reglage from '../Pages/Reglage';
+import Communaute from '../Pages/Communaute';
 import Layout from '../Components/Layout';
 
 const router = createBrowserRouter(
@@ -7,8 +10,22 @@ const router = createBrowserRouter(
     <Route path='/' element={<Layout/>}>
       <Route
         path= '/'
+        element={<Acceuil />}
+      />
+      <Route
+        path= '/user/:id'
+        loader={userInfosLoader}
         element={<Profil />}
       />
+      <Route
+        path= 'reglage'
+        element={<Reglage />}
+      />
+      <Route
+        path= 'communaute'
+        element={<Communaute />}
+      />
+
     </Route>
   )
 );

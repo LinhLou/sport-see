@@ -3,8 +3,6 @@ import styled from 'styled-components';
 const LayoutStyled = styled.div`
   min-height: 768px;
   min-width: 1024px;
-  color: white;
-  background-color: red;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 91px 1fr;
@@ -51,6 +49,7 @@ const LayoutStyled = styled.div`
     padding-top: 247px;
     display: grid;
     grid-template-rows: min-content 1fr;
+    color: white;
 
     div{
       display: flex;

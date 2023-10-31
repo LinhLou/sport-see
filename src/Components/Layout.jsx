@@ -1,17 +1,37 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import LayoutStyled from '../Styles/Layout.styled';
 import Profil from '../Pages/Profil';
+import Acceuil from '../Pages/Acceuil';
+import Reglage from '../Pages/Reglage';
+import Communaute from '../Pages/Communaute';
 
 
 export default function Layout() {
   const location = useLocation();
-  let active='active';
-  if(location.pathname='/'){
-    active='active';
-  }else{
-    active='inactive';
-  }
+  const refAcceuil = useRef();
+  const refProfil = useRef();
+  const refReglage = useRef();
+  const refCommunaute = useRef();
+  useEffect(()=>{
+    if(location.pathname=='/'){
+      refAcceuil.current.className='active';
+    }else if(location.pathname.includes('/user/')){
+      refProfil.current.className='active';
+    }else if(location.pathname=='/reglage'){
+      refReglage.current.className='active';
+    }else if(location.pathname=='/communaute'){
+      refCommunaute.current.className='active';
+    }
+    return ()=>{
+      refAcceuil.current.className='inactive';
+      refProfil.current.className='inactive';
+      refReglage.current.className='inactive';
+      refCommunaute.current.className='inactive';
+    }
+  })
+
+
   return (
     <LayoutStyled>
       <header>
@@ -36,10 +56,10 @@ export default function Layout() {
           </svg>
         </div>
         <nav>
-          <Link to='/' element={<Profil/>} >Acceuil</Link>
-          <Link to='/' element={<Profil/>} className={active}>Profil</Link>
-          <Link to='/' element={<Profil/>} >Réglage</Link>
-          <Link to='/' element={<Profil/>} >Communauté</Link>
+          <Link to='/' element={<Acceuil/>} ref ={refAcceuil}>Acceuil</Link>
+          <Link to='/user/18' element={<Profil/>} ref ={refProfil}>Profil</Link>
+          <Link to='/reglage' element={<Reglage/>} ref ={refReglage}>Réglage</Link>
+          <Link to='/communaute' element={<Communaute/>} ref ={refCommunaute}>Communauté</Link>
         </nav>
       </header>
       <main>
