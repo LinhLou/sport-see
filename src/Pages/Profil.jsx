@@ -3,19 +3,47 @@ import { useParams, useLoaderData } from 'react-router-dom';
 import PageProfilStyles from '../Styles/pageProfil.styled';
 import mockAPI from '../App/mockAPI';
 import GetUserData from '../App/getData';
+import Card from '../Components/Card';
 
 
 
 export default function Profil() {
   const { id } = useParams();
-  const { generalInfos, activity, sessions, performances } = useLoaderData()
+  const { generalInfos, activity, sessions, performances } = useLoaderData();
+  const keyData = Object.values(generalInfos['data'].keyData);
+  const category = ['Calories','Proteines','Glucides','Lipides'];
+  const unites = ['kCal','g','g','g'];
 
   return (
     <PageProfilStyles>
-      <h1>{generalInfos['data'].id}</h1>
-      <h2>{activity['data'].sessions[0].day}</h2>
+      <div id="header">
+        <h1>Bonjour <span>{generalInfos['data'].userInfos.firstName}</span></h1>
+        <p>Félicitation ! Vous avez explosé vos objectifs hier 👏 </p>
+      </div>
+      {/* <h2>{activity['data'].sessions[0].day}</h2>
       <h3>{sessions['data'].sessions[0].day}</h3>
-      <h3>{performances['data'].kind["1"]}</h3>
+      <h3>{performances['data'].kind["1"]}</h3> */}
+      <div id="container">
+        <section id="charts">
+          <div id="barchart">
+            hello
+          </div>
+          <div>
+
+          </div>
+        </section>
+        <div id="cards">
+          {
+            keyData.map((item, index)=>{
+              return(
+                <Card key={category[index]} quantity={`${item}${unites[index]}`} category={category[index]} >
+                </Card>
+              )
+            })
+
+          }
+        </div>
+      </div>
     </PageProfilStyles>
   )
 }

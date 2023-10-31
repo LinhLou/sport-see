@@ -13,11 +13,12 @@ const LayoutStyled = styled.div`
     grid-template-columns: 180px 1fr;
     div, nav{
       display: flex;
-      justify-content: space-evenly;
+      justify-content: space-between;
       align-items: center;
     }
     nav{
-      /* gap:219px; */
+      padding-right:91px;
+      padding-left:149px;
       a{
         text-decoration: none;
         color:white;
@@ -25,12 +26,12 @@ const LayoutStyled = styled.div`
         font-size: 24px;
         font-style: normal;
         font-weight: 500;
-        line-height: 24px; /* 100% */
+        line-height: 24px; 
         &:hover{
-          color:yellow;
+          color:#FF0101;
         }
         &.active{
-          color:yellow;
+          color:#FF0101;
         }
         &.inactive{
           color:white;
