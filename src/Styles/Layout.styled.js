@@ -42,12 +42,12 @@ const LayoutStyled = styled.div`
   main{
     box-sizing: border-box;
     display: flex;
+
   }
   aside{
-    height: 100%;
     width: 117px;
     background-color: black;
-    padding-top: 247px;
+    padding-top: 256px;
     display: grid;
     grid-template-rows: min-content 1fr;
     color: white;

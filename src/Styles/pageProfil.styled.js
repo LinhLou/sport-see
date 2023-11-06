@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+
 const PageProfilStyles = styled.div`
   background-color: white;
   height: 100%;
@@ -26,23 +27,25 @@ const PageProfilStyles = styled.div`
   }
   & #container{
     padding-left: 107px;
-    padding-right: 90px;
+    padding-right: 91px;
+    padding-bottom:88px;
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 3.2fr 1fr;
     column-gap: 31px;
     & #charts{
       display: grid;
       grid-template-rows: 1fr 1fr;
       gap:28px;
-      &#barchart{
-        
+      & #barchart{
+        background-color: #FBFBFB;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       div{
         background-color: #FF0101;
+        border:2px solid blue;
       }
-      /* div{
-        height: 520px;
-      } */
     }
     & #cards{
       display: grid;
@@ -51,6 +54,6 @@ const PageProfilStyles = styled.div`
     }
   }
 
-`
+`;
 
 export default PageProfilStyles;

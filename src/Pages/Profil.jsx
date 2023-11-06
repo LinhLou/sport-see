@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useLoaderData } from 'react-router-dom';
 import PageProfilStyles from '../Styles/pageProfil.styled';
 import mockAPI from '../App/mockAPI';
 import GetUserData from '../App/getData';
+import { formaterDay } from '../App/formaterData';
 import Card from '../Components/Card';
+import Barchart from '../Components/Barchart';
 
 
 
 export default function Profil() {
   const { id } = useParams();
+  // const divBarChart = useRef();
   const { generalInfos, activity, sessions, performances } = useLoaderData();
+  // generals informations
   const keyData = Object.values(generalInfos['data'].keyData);
   const category = ['Calories','Proteines','Glucides','Lipides'];
   const unites = ['kCal','g','g','g'];
+  // poids et calories brulées quoitidiens
+  const activityQuotidien = activity.data.sessions.reduce((acc,ele)=>{
+    acc.day= [...acc.day,formaterDay(ele.day)];
+    acc.kilogram= [...acc.kilogram,ele.kilogram];
+    acc.calories= [...acc.calories,ele.calories];
+    return acc;
+  },{day:[],kilogram:[],calories:[]})
+
 
   return (
     <PageProfilStyles>
@@ -25,11 +37,10 @@ export default function Profil() {
       <h3>{performances['data'].kind["1"]}</h3> */}
       <div id="container">
         <section id="charts">
-          <div id="barchart">
-            hello
+          <div id="barchart" >
+            <Barchart data={activityQuotidien} />
           </div>
           <div>
-
           </div>
         </section>
         <div id="cards">
