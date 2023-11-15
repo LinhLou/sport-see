@@ -19,13 +19,11 @@ export default function Profil() {
   const unites = ['kCal','g','g','g'];
   // poids et calories brulées quoitidiens
   const activityQuotidien = activity.data.sessions.reduce((acc,ele)=>{
-    acc.day= [...acc.day,formaterDay(ele.day)];
-    acc.kilogram= [...acc.kilogram,ele.kilogram];
-    acc.calories= [...acc.calories,ele.calories];
+    acc = [...acc, {day:formaterDay(ele.day), poid:ele.kilogram, calories:ele.calories}]
     return acc;
-  },{day:[],kilogram:[],calories:[]})
+  },[])
 
-
+console.log(activityQuotidien);
   return (
     <PageProfilStyles>
       <div id="header">
