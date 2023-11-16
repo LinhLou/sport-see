@@ -15,6 +15,7 @@ export default function Barchart({data}) {
   const upPoid = Math.ceil(Math.max(...poids))+1;
   const lowPoid = Math.floor(Math.min(...poids))-1;
   const paddingBarPopUp = 15;
+  const paddingTextPopup = 5;
   const color = ['red','black'];
 
 
@@ -93,19 +94,21 @@ export default function Barchart({data}) {
     }  
     const handlerMouseOver = (e,d)=>{
       d3.select(`.popup${d.day}`).attr('fill','#c4c4c480');
+      d3.select(`.popup-textContainer${d.day}`).attr('fill','red');
+      d3.select(`.popup-text${d.day}`).attr('fill','white');
     }
     const handlerMouseOut = (e,d)=>{
       d3.select(`.popup${d.day}`).attr('fill','transparent');
+      d3.select(`.popup-textContainer${d.day}`).attr('fill','transparent');
+      d3.select(`.popup-text${d.day}`).attr('fill','transparent');
     }
 
     // pop-up
-
     svg.append('g')
     .attr('fill','transparent')
     .selectAll()
     .data(data)
-    .enter()
-    .append('path')
+    .join('path')
     .attr("d", d =>{ const y = d3.min([yPoidScale(d.poid), yCaloScale(d.calories)]); 
       let h;
       if(y==yPoidScale(d.poid)){
@@ -113,24 +116,44 @@ export default function Barchart({data}) {
       }else{
         h = yCaloScale(lowCalorie/10)-yCaloScale(d.calories);
       }
-      return roundedRect(xScale(d.day),y-paddingBarPopUp, h + paddingBarPopUp, xScale.bandwidth()+paddingBarPopUp*2,0)})
-    .attr('transform',d=>`translate(-${paddingBarPopUp},0)`)
+      return roundedRect(xScale(d.day),y, h + paddingBarPopUp, xScale.bandwidth()+paddingBarPopUp*2,0)})
+    .attr('transform',d=>`translate(${-paddingBarPopUp},${-paddingBarPopUp})`)
     .attr('class',(d)=>`popup${d.day}`)
 
-    const infosPopup = svg.append('g')
-    .selectAll()
+
+    const getSizeTextContainer = (selection)=>{
+      selection.each(function(d){d.bbox = this.getBBox();})
+    }
+    
+    const textContainer = svg.append('g')
+    .selectAll('rect')
     .data(data)
-    .enter()
-    .append('g')
-    .attr('transform',d=>`translate(${xScale.bandwidth()+paddingBarPopUp+10},-10)`)
+    .join('rect')
+    .attr("fill", "transparent")
+    .attr('class',(d)=>`popup-textContainer${d.day}`)
+
+    const textPopup = svg.append('g')
+    .selectAll('text')
+    .data(data)
+    .join('text')
+    .attr('x',(d)=>xScale(d.day))
+    .attr('y',d=>d3.min([yPoidScale(d.poid), yCaloScale(d.calories)])+paddingBarPopUp-paddingTextPopup)
+    .attr('fill','transparent')
+    .style('font-size','0.7em')
+    
     .attr('class',(d)=>`popup-text${d.day}`)
 
-    infosPopup.append('text')
-    .text('helle')
-    infosPopup.append('path')
-    .attr("d", d =>{ const y = d3.min([yPoidScale(d.poid), yCaloScale(d.calories)]); 
-      return roundedRect(xScale(d.day),y-paddingBarPopUp, 50, xScale.bandwidth(),0)})
-      .attr('fill','red')
+    textPopup.append('tspan').text(d=>`${d.poid}kg`).attr("text-anchor", "middle")
+    textPopup.append('tspan').text(d=>`${d.calories}Kcal`).attr('dy','2em').attr('x',(d)=>xScale(d.day)).attr("text-anchor", "middle")
+    textPopup.call(getSizeTextContainer)
+    .attr('transform',d=>`translate(${d.bbox.width + xScale.bandwidth()+5},-${d.bbox.height/2 + 3*paddingTextPopup})`)
+
+    textContainer.attr('x',d=>d.bbox.x -paddingTextPopup)
+    .attr('y',d=>d.bbox.y - 3*paddingTextPopup)
+    .attr("width", d=> d.bbox.width + 2*paddingTextPopup)
+    .attr("height",d=> d.bbox.height + 6*paddingTextPopup)
+    .attr('transform',d=>`translate(${d.bbox.width + xScale.bandwidth()+5}, -${d.bbox.height/2 + 3*paddingTextPopup})`)
+
 
     // poids bar
     svg.append('g')
