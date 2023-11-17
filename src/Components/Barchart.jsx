@@ -12,8 +12,8 @@ export default function Barchart({data}) {
   const calories = data.map(ele=>ele.calories);
   const upCalorie = Math.max(...calories);
   const lowCalorie = Math.min(...calories);
-  const upPoid = Math.ceil(Math.max(...poids))+1;
   const lowPoid = Math.floor(Math.min(...poids))-1;
+  const upPoid = Math.ceil((Math.max(...poids)-lowPoid)/3)*3+lowPoid;
   const paddingBarPopUp = 15;
   const paddingTextPopup = 5;
   const color = d3.scaleOrdinal(["Calories brûlées (Kcal)", "Poids (kg)"], ["red","black"]);
@@ -46,8 +46,7 @@ export default function Barchart({data}) {
     .tickSize(0);
     
     const yAxis = d3.axisRight(yPoidScale)
-    // .ticks(3)
-    .tickValues(d3.range(lowPoid, upPoid +1 ,2))
+    .tickValues(d3.range(lowPoid, upPoid +1 ,(upPoid-lowPoid)/3))
     .tickFormat(d3.format("d"))
     .tickSize(-width + margin.Left + margin.Right)
 
@@ -184,7 +183,7 @@ export default function Barchart({data}) {
     svg.append("text")
           .attr("x", margin.Left)
           .attr("y", margin.Top/2)
-          .style("font-size", "1.8em")
+          .style("font-size", "1.2em")
           .text("Activité quoitidienne");
 
     // ----------- legend --------------------------//
@@ -214,7 +213,7 @@ export default function Barchart({data}) {
     .attr('cy', margin.Top/2 - xScale.bandwidth()/6)
     .attr('r',xScale.bandwidth()/6)
     .style('fill', color)
-    .attr('transform',(d,i)=>`translate(-15,0)`)   
+    .attr('transform',`translate(-15,0)`)   
 
   },[data])
 
