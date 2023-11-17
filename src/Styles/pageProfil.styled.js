@@ -43,8 +43,7 @@ const PageProfilStyles = styled.div`
         align-items: center;
       }
       div{
-        background-color: #FF0101;
-        border:2px solid blue;
+        background-color: #FBFBFB;
       }
     }
     & #cards{
