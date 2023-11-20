@@ -6,6 +6,7 @@ import GetUserData from '../App/getData';
 import { formaterDay } from '../App/formaterData';
 import Card from '../Components/Card';
 import Barchart from '../Components/Barchart';
+import LineChart from '../Components/LineChart';
 
 
 
@@ -17,13 +18,18 @@ export default function Profil() {
   const keyData = Object.values(generalInfos['data'].keyData);
   const category = ['Calories','Proteines','Glucides','Lipides'];
   const unites = ['kCal','g','g','g'];
-  // poids et calories brulées quoitidiens
+  // weight and daily bruned calories 
   const activityQuotidien = activity.data.sessions.reduce((acc,ele)=>{
     acc = [...acc, {day:formaterDay(ele.day), poid:ele.kilogram, calories:ele.calories}]
     return acc;
   },[])
+  // session duration
+  const sessionDuration = sessions.data.sessions.reduce((acc, ele)=>{
+    acc = [...acc, {day:ele.day, duration:ele.sessionLength}];
+    return acc;
+  },[])
 
-console.log(activityQuotidien);
+  // console.log(sessionDuration)
   return (
     <PageProfilStyles>
       <div id="header">
@@ -36,9 +42,18 @@ console.log(activityQuotidien);
       <div id="container">
         <section id="charts">
           <div id="barchart" >
-            <Barchart data={activityQuotidien} />
+            <Barchart data = {activityQuotidien} />
           </div>
-          <div>
+          <div id="otherChats">
+            <div>
+              <LineChart data = {sessionDuration}/>
+            </div>
+            <div>
+              Radar Chart
+            </div>
+            <div>
+              Radia Bar Chart
+            </div>
           </div>
         </section>
         <div id="cards">

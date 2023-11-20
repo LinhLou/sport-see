@@ -20,11 +20,12 @@ export default function Barchart({data}) {
 
 
   useEffect(()=>{
-    // set up svg
+    //------------ set up svg------------------------//
     const svg = d3.select(refBarChart.current)
                     .attr("preserveAspectRatio", "xMidYMid meet")
                     .attr('viewBox',[0, 0, width, height])
                     .style('background','#FBFBFB')
+                    // .style('background','red')
 
     //----------- set up axis --------------------------//
     const xScale = d3.scaleBand()
@@ -61,26 +62,26 @@ export default function Barchart({data}) {
     .call(yAxis)
 
    // styles to axis
-    d3.selectAll('.tick text')
+    svg.selectAll('.tick text')
         .style('color','#9B9EAC')
         .style('font-size','2em')
-    d3.selectAll('.yAxis .domain')
+    svg.selectAll('.yAxis .domain')
       .remove()
-    d3.selectAll('.yAxis line')
+    svg.selectAll('.yAxis line')
        .attr('transform',`translate(${-margin.Right/3*2},0)`)
        .attr('stroke','#DEDEDE')
        .attr('stroke-width','1px')
        .attr('stroke-dasharray',1)
-    d3.selectAll('.yAxis')
+    svg.selectAll('.yAxis')
       .selectChild('.tick')
       .select('line')
         .style('stroke-width',`0`)
-    d3.selectAll('.xAxis .domain')
+    svg.selectAll('.xAxis .domain')
         .attr('stroke','#DEDEDE')
         .attr('stroke-width','1px')
-    d3.selectAll('.xAxis .tick text')
+    svg.selectAll('.xAxis .tick text')
         .attr('transform','translate(0,5)')
-    d3.selectAll('.yAxis text')
+    svg.selectAll('.yAxis text')
         .attr("text-anchor", "end")
     
 
@@ -98,7 +99,7 @@ export default function Barchart({data}) {
 
 
     const handlerMouseOver = (e,d)=>{
-      d3.select(`.popup${d.day}`).attr('fill','#c4c4c480');
+      svg.select(`.popup${d.day}`).attr('fill','#c4c4c480');
       
       // create text box pop-up
       const textContainer = svg.append('g')
@@ -118,7 +119,7 @@ export default function Barchart({data}) {
       textPopup.append('tspan').text(`${d.poid}kg`).attr("text-anchor", "middle")
       textPopup.append('tspan').text(`${d.calories}Kcal`).attr('dy','2em').attr('x',xScale(d.day)).attr("text-anchor", "middle")
 
-      const textBBox = d3.select(`.popup-text${d.day}`).node().getBBox(); // get x,y,hight, width of text already created
+      const textBBox = svg.select(`.popup-text${d.day}`).node().getBBox(); // get x,y,hight, width of text already created
 
       textPopup.attr('transform',`translate(${textBBox.width + xScale.bandwidth()+5},-${textBBox.height/2 + 3*paddingTextPopup})`)
   
@@ -131,9 +132,9 @@ export default function Barchart({data}) {
     
 
     const handlerMouseOut = (e,d)=>{
-      d3.select(`.popup${d.day}`).attr('fill','transparent');
-      d3.select(`.popup-textContainer${d.day}`).remove();
-      d3.select(`.popup-text${d.day}`).remove();
+      svg.select(`.popup${d.day}`).attr('fill','transparent');
+      svg.select(`.popup-textContainer${d.day}`).remove();
+      svg.select(`.popup-text${d.day}`).remove();
     }
 
     // pop-up

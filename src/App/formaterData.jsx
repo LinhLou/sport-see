@@ -1,4 +1,3 @@
-const dates = {1:'L', 2:'M',3:'M',4:'J','5':'V',6:'S',7:'D'}
 export const formaterDay = (day) => {
   if(!day){
     return;
@@ -10,7 +9,5 @@ export const formaterDay = (day) => {
     }else{
       return Number(date)
     }
-  }else{
-    console.log(dates[day])
   }
 }

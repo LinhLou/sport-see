@@ -33,14 +33,25 @@ const PageProfilStyles = styled.div`
     grid-template-columns: 3.2fr 1fr;
     column-gap: 31px;
     & #charts{
-      display: grid;
-      grid-template-rows: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
+      /* grid-template-rows: 1fr 1fr; */
       gap:28px;
       & #barchart{
         background-color: #FBFBFB;
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+      & #otherChats{
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap:30px;
+        div{
+          /* border: 2px solid blue; */
+          /* overflow: hidden; */
+
+        }
       }
       div{
         background-color: #FBFBFB;
