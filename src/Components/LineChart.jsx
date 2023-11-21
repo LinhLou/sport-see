@@ -6,11 +6,17 @@ export default function LineChart({data}) {
 
   const days = data.map(ele=>ele.day);
   const durations = data.map(ele=>ele.duration);
+
+  const dataExtend = [{day:0,duration:durations[0]},...data,{day:8,duration:durations[days.length-1]}];
+  const daysExtend = dataExtend.map(ele=>ele.day);
+  const durationExtend = dataExtend.map(ele=>ele.duration);
+
   const refLineChart = useRef();
   const width = 258;
   const height = 258;
   const margin = {Top:100, Right:0, Bottom:50, Left:0};
   const opacity = 0.5;
+
   useEffect(()=>{
     // ------------set up svg------------------//
     const svg = d3.select(refLineChart.current)
@@ -22,25 +28,26 @@ export default function LineChart({data}) {
 
 
     // -----------set up axis -------------------//
-    // axis scales
-    const xScale = d3.scalePoint()
-    .domain(days)
-    .range([margin.Left, width-margin.Right])
-    .padding(0.5);
-
-    const yScale = d3.scaleLinear()
-    .domain([d3.min(durations)/2,d3.max(durations)])
-    .range([height-margin.Bottom, margin.Top])
+ 
+      // axis scales
+      const xScale = d3.scalePoint()
+      .domain(daysExtend)
+      .range([margin.Left, width-margin.Right])
+      .padding(-0.5);
+ 
+      
+     const yScale = d3.scaleLinear()
+     .domain([d3.min(durationExtend)/2,d3.max(durationExtend)])
+     .range([height-margin.Bottom, margin.Top])
 
     // axis generator
-    const tickLabels = ['L','M','M','J','V','S','D'];
+    const tickLabels = ['','L','M','M','J','V','S','D',''];
     const xAxis = d3.axisBottom(xScale)
     .tickFormat((d,i)=>tickLabels[i])
     .tickSizeOuter(2)
     .tickSize(0)
 
     const yAxis  = d3.axisLeft(yScale)
-
 
     // axis render
     svg.append('g')
@@ -61,50 +68,51 @@ export default function LineChart({data}) {
     .style('font-size','1.2em')
     .attr('transform','translate(0,10)')
 
+    
     // -------------- draw line ------------------//
-
+    // draw line
     svg.append('path')
-    .datum(data)
+    .datum(dataExtend)
     .attr("fill", "none")
     .attr('d',d3.line()
       .x((d)=>xScale(d.day))
       .y((d)=>yScale(d.duration))
-      .curve(d3.curveBumpX)
+      .curve(d3.curveBumpX) 
     )
+    .attr("stroke", "white")
+    .attr("stroke-width", '2px')
+    .attr('opacity',opacity)
     .attr('class','lineChart')
-    .attr('fill','transparent')
 
     // add mouse event to svg
     d3.select('.svgLine')
     .on("mousemove",(e)=>handlerMouseOver(e))
 
-
-    const getCuvrePointsCoordinates = (data)=>{
-      
+    const getCuvrePointsCoordinates = ()=>{
+    
       // get coordinates of points in curve corresponding to data points
       const curvePath = svg.select('.lineChart').attr('d');
       const curvePointsArray = curvePath.split(/M|L|C/);
+
       let pointCoordinates = curvePointsArray.reduce((acc,ele)=>{
-        if(ele.split(',').length==data.length-1){
+        if(ele.split(',').length==6){
           acc = [...acc,{x:ele.split(',')[4],y:ele.split(',')[5]}];
           return acc;
         }else{
           return acc;
         }
       },[{x:curvePointsArray[1].split(',')[0], y:curvePointsArray[1].split(',')[1]}]);
-      
-      // pointCoordinates = [...pointCoordinates,{x:curvePointsArray[nbrItem-1].split(',')[0], y:curvePointsArray[nbrItem-1].split(',')[1]}];
 
       return {pointCoordinates}
     }
 
     const getNearestPointCoordinate=(e)=>{
       // get coordinates of nearest point compared with the mouse
-      const { pointCoordinates } = getCuvrePointsCoordinates(data);
+      const { pointCoordinates } = getCuvrePointsCoordinates();
       const mousePosition = d3.pointer(e); // get coordinate of mouse
 
-      const ecarts =  pointCoordinates.map((ele)=>Math.pow((Math.pow((ele.x-mousePosition[0]),2)+Math.pow((ele.y-mousePosition[1]),2)),0.5));
-      const minEcart = ecarts.filter(ele=>ele===Math.min(...ecarts));
+      const ecarts =  pointCoordinates.map((ele)=>Math.pow((Math.pow((ele.x-mousePosition[0]),2)+Math.pow((ele.y-mousePosition[1]),2)),0.5)); // calculate ecart from mouse position to all data points
+      const minEcart = ecarts.filter(ele=>ele===Math.min(...ecarts)); 
       const indexMin = ecarts.indexOf(...minEcart);
       return {x:pointCoordinates[indexMin].x, y:pointCoordinates[indexMin].y, index:indexMin, minEcart:minEcart[0]}
     }
@@ -112,7 +120,7 @@ export default function LineChart({data}) {
     const handlerMouseOver =(e)=>{
       const { x, y, index, minEcart} = getNearestPointCoordinate(e);
       if(minEcart>15){
-        svg.selectAll("[class*='popup']").remove();
+        svg.selectAll("[class*='popup']").remove(); 
       }else{
         svg.selectAll("[class*='popup']").remove()
         const popup = svg.append('g')
@@ -147,13 +155,12 @@ export default function LineChart({data}) {
         const infosContainer = popup.append('g')
         .append('rect')
         .attr('fill','#FFF')
-        // .attr('class',`infosContainer${index}`)
   
         const text = popup.append('text')
         .attr('x',x)
         .attr('y',y)
         .attr('fill','black')
-        .text(`${data[index].duration} min`)
+        .text(`${dataExtend[index].duration} min`)
         .attr('text-anchor','middle')
         .attr('font-size','0.8em')
         .attr('font-weight','500')
@@ -165,7 +172,7 @@ export default function LineChart({data}) {
         .attr('width',textBox.width+2*paddingText)
         .attr('height',textBox.height+2*paddingText)
   
-        if(index==data.length-1){
+        if(index==dataExtend.length-2){ // last right popup position
           text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
           infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
         }else{
@@ -175,35 +182,9 @@ export default function LineChart({data}) {
   
       }
 
+
+
     }
-
-    // extend curve
-    const dataExtend = [{day:0,duration:durations[0]},...data,{day:8,duration:durations[days.length-1]}];
-    const daysExtend = dataExtend.map(ele=>ele.day);
-    const durationExtend = dataExtend.map(ele=>ele.duration);
-
-     // axis scales
-     const xScaleExtend = d3.scalePoint()
-     .domain(daysExtend)
-     .range([margin.Left, width-margin.Right])
-     .padding(-0.5);
-
-     
-    const yScaleExtend = d3.scaleLinear()
-    .domain([d3.min(durationExtend)/2,d3.max(durationExtend)])
-    .range([height-margin.Bottom, margin.Top])
-
-     svg.append('path')
-    .datum(dataExtend)
-    .attr("fill", "none")
-    .attr('d',d3.line()
-      .x((d)=>xScaleExtend(d.day))
-      .y((d)=>yScaleExtend(d.duration))
-      .curve(d3.curveBumpX)
-    )
-    .attr("stroke", "white")
-    .attr("stroke-width", '2px')
-    .attr('opacity',opacity)
 
     //-------------- title ----------------------//
     const paddingTop = 40;
