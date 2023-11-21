@@ -7,6 +7,7 @@ import { formaterDay } from '../App/formaterData';
 import Card from '../Components/Card';
 import Barchart from '../Components/Barchart';
 import LineChart from '../Components/LineChart';
+import SpiderChart from '../Components/SpiderChart';
 
 
 
@@ -23,11 +24,13 @@ export default function Profil() {
     acc = [...acc, {day:formaterDay(ele.day), poid:ele.kilogram, calories:ele.calories}]
     return acc;
   },[])
-  // session duration
+  // sessions duration
   const sessionDuration = sessions.data.sessions.reduce((acc, ele)=>{
     acc = [...acc, {day:ele.day, duration:ele.sessionLength}];
     return acc;
   },[])
+  // performances
+  // const performancesInfos = 
 
   // console.log(sessionDuration)
   return (
@@ -49,7 +52,7 @@ export default function Profil() {
               <LineChart data = {sessionDuration}/>
             </div>
             <div>
-              Radar Chart
+              <SpiderChart />
             </div>
             <div>
               Radia Bar Chart
