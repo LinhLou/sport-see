@@ -113,7 +113,6 @@ export default function Barchart({data}) {
       .attr('y',d3.min([yPoidScale(d.poid), yCaloScale(d.calories)])+paddingBarPopUp-paddingTextPopup)
       .attr('fill','white')
       .style('font-size','0.7em')
-      
       .attr('class',`popup-text${d.day}`)
   
       textPopup.append('tspan').text(`${d.poid}kg`).attr("text-anchor", "middle")
