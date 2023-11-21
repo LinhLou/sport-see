@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from "d3";
-import { append } from 'stylis';
+
 
 export default function LineChart({data}) {
 
@@ -18,6 +18,8 @@ export default function LineChart({data}) {
     .attr('viewBox',[0, 0, width, height])
     .style('background','red')
     .style('border-radius','5px')
+    .attr('class','svgLine')
+
 
     // -----------set up axis -------------------//
     // axis scales
@@ -76,7 +78,6 @@ export default function LineChart({data}) {
       },[{x:curvePointsArray[1].split(',')[0], y:curvePointsArray[1].split(',')[1]}]);
       
       pointCoordinates = [...pointCoordinates,{x:curvePointsArray[nbrItem-1].split(',')[0], y:curvePointsArray[nbrItem-1].split(',')[1]}];
-      console.log(pointCoordinates)
 
       return {pointCoordinates}
     }
@@ -86,74 +87,73 @@ export default function LineChart({data}) {
       const { pointCoordinates } = getCuvrePointsCoordinates(data);
       const mousePosition = d3.pointer(e); // get coordinate of mouse
 
-      const xEcarts =  pointCoordinates.map((ele)=>Math.abs(ele.x-mousePosition[0]));
-      const xMinEcart = xEcarts.filter(ele=>ele===Math.min(...xEcarts));
-      const indexMin = xEcarts.indexOf(...xMinEcart);
-      return {x:pointCoordinates[indexMin].x, y:pointCoordinates[indexMin].y, index:indexMin}
+      const ecarts =  pointCoordinates.map((ele)=>Math.pow((Math.pow((ele.x-mousePosition[0]),2)+Math.pow((ele.y-mousePosition[1]),2)),0.5));
+      const minEcart = ecarts.filter(ele=>ele===Math.min(...ecarts));
+      const indexMin = ecarts.indexOf(...minEcart);
+      return {x:pointCoordinates[indexMin].x, y:pointCoordinates[indexMin].y, index:indexMin, minEcart:minEcart[0]}
     }
+
 
     const handlerMouseOver =(e)=>{
-      const {x, y, index} = getNearestPointCoordinate(e);
-      console.log(index)
-      const popup = svg.append('g')
-      .attr('class',`popup${index}`)
+      const { x, y, index, minEcart} = getNearestPointCoordinate(e);
+      if(minEcart>15){
+        svg.selectAll("[class*='popup']").remove();
+      }else{
+        svg.selectAll("[class*='popup']").remove()
+        const popup = svg.append('g')
+        .attr('class',`popup${index}`)
+  
+        // draw a rect
+        popup.append('rect')
+        .attr('x',x)
+        .attr('y',0)
+        .attr('height',height)
+        .attr('width',width-x)
+        .attr('fill','black')
+        .style('opacity',0.0975)
+  
+        //draw circle
+        popup.append('circle')
+        .attr('cx',x)
+        .attr('cy',y)
+        .attr('r','10')
+        .attr('fill','white')
+        .style('opacity',0.215)
+  
+        //draw circle
+        popup.append('circle')
+        .attr('cx',x)
+        .attr('cy',y)
+        .attr('r','5')
+        .attr('fill','white')
+  
+        // draw rect with info
+        const paddingText = 5;
+        const infosContainer = popup.append('g')
+        .append('rect')
+        .attr('fill','#FFF')
+        // .attr('class',`infosContainer${index}`)
+  
+        const text = popup.append('text')
+        .attr('x',x)
+        .attr('y',y)
+        .attr('fill','black')
+        .text(`${data[index].duration} min`)
+        .attr('text-anchor','middle')
+        .attr('font-size','0.8em')
+        .attr('class',`text${index}`)
+  
+        const textBox =  popup.select(`.text${index}`).node().getBBox(); // get x,y,hight, width of text already created
+        infosContainer.attr('x',x-textBox.width/2-paddingText)
+        .attr('y',textBox.y-paddingText)
+        .attr('width',textBox.width+2*paddingText)
+        .attr('height',textBox.height+2*paddingText)
+  
+  
+        text.attr('transform',`translate(0,-20)`)
+        infosContainer.attr('transform',`translate(0,-20)`)
+      }
 
-      // draw a rect
-      popup.append('rect')
-      .attr('x',x)
-      .attr('y',0)
-      .attr('height',height)
-      .attr('width',width-x)
-      .attr('fill','black')
-      .style('opacity',0.0975)
-
-      //draw circle
-      popup.append('circle')
-      .attr('cx',x)
-      .attr('cy',y)
-      .attr('r','10')
-      .attr('fill','white')
-      .style('opacity',0.215)
-
-      //draw circle
-      popup.append('circle')
-      .attr('cx',x)
-      .attr('cy',y)
-      .attr('r','5')
-      .attr('fill','white')
-
-      // draw rect with info
-      const paddingText = 5;
-      const infosContainer = svg.append('g')
-      .append('rect')
-      .attr('fill','#FFF')
-      .attr('class',`infosContainer${index}`)
-
-      const text = svg.append('text')
-      .attr('x',x)
-      .attr('y',y)
-      .attr('fill','black')
-      .text(`${data[index].duration} min`)
-      .attr('text-anchor','middle')
-      .attr('font-size','0.8em')
-      .attr('class',`text${index}`)
-
-      const textBox =  svg.select(`.text${index}`).node().getBBox(); // get x,y,hight, width of text already created
-      infosContainer.attr('x',x-textBox.width/2-paddingText)
-      .attr('y',textBox.y-paddingText)
-      .attr('width',textBox.width+2*paddingText)
-      .attr('height',textBox.height+2*paddingText)
-
-
-      text.attr('transform',`translate(0,-15)`)
-      infosContainer.attr('transform',`translate(0,-15)`)
-
-    }
-    const handlerMouseOut = (e)=>{
-      const {index} = getNearestPointCoordinate(e);
-      svg.select(`.popup${index}`).remove();
-      svg.select(`.infosContainer${index}`).remove();
-      svg.select(`.text${index}`).remove();
     }
 
     svg.append('path')
@@ -168,21 +168,11 @@ export default function LineChart({data}) {
     .attr("stroke", "#FFF")
     .attr("stroke-width", '2px')
     .attr('opacity',opacity)
-    .on("mouseover",(e)=>handlerMouseOver(e))
-    .on("mouseout",(e)=>handlerMouseOut(e))
 
-    // const { pointCoordinates } = getCuvrePointsCoordinates(data);
 
-    // svg.append('g')
-    // .selectAll()
-    // .data(pointCoordinates)
-    // .join('circle')
-    // .attr('cx', d=>d.x)
-    // .attr('cy',d=>d.y)
-    // .attr('r',width/16)
-    // .attr('opacity',0.6)
-    // .on("mouseover",(e)=>handlerMouseOver(e))
-    // .on("mouseout",(e)=>handlerMouseOut(e))
+    // add mouse event to svg
+    d3.select('.svgLine')
+    .on("mousemove",(e)=>handlerMouseOver(e))
 
 
     //-------------- title ----------------------//
@@ -200,7 +190,7 @@ export default function LineChart({data}) {
     title.append('tspan')
     .text('sessions')
     .attr('x',paddingTop)
-    .attr('dy', '1.5em')
+    .attr('dy', '1.3em')
 
   },[data])
   return (
