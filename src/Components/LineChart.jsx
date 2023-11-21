@@ -9,7 +9,7 @@ export default function LineChart({data}) {
   const refLineChart = useRef();
   const width = 258;
   const height = 258;
-  const margin = {Top:100, Right:0, Bottom:40, Left:0};
+  const margin = {Top:100, Right:0, Bottom:50, Left:0};
   const opacity = 0.5;
   useEffect(()=>{
     // ------------set up svg------------------//
@@ -29,7 +29,7 @@ export default function LineChart({data}) {
     .padding(0.5);
 
     const yScale = d3.scaleLinear()
-    .domain([0,d3.max(durations)])
+    .domain([d3.min(durations)/2,d3.max(durations)])
     .range([height-margin.Bottom, margin.Top])
 
     // axis generator
@@ -59,17 +59,33 @@ export default function LineChart({data}) {
     .style('color',"white")
     .style('opacity',opacity)
     .style('font-size','1.2em')
+    .attr('transform','translate(0,10)')
 
     // -------------- draw line ------------------//
+
+    svg.append('path')
+    .datum(data)
+    .attr("fill", "none")
+    .attr('d',d3.line()
+      .x((d)=>xScale(d.day))
+      .y((d)=>yScale(d.duration))
+      .curve(d3.curveBumpX)
+    )
+    .attr('class','lineChart')
+    .attr('fill','transparent')
+
+    // add mouse event to svg
+    d3.select('.svgLine')
+    .on("mousemove",(e)=>handlerMouseOver(e))
+
 
     const getCuvrePointsCoordinates = (data)=>{
       
       // get coordinates of points in curve corresponding to data points
       const curvePath = svg.select('.lineChart').attr('d');
       const curvePointsArray = curvePath.split(/M|L|C/);
-      const nbrItem = curvePointsArray.length;
-      let pointCoordinates = curvePointsArray.reduce((acc,ele,index)=>{
-        if(ele.split(',').length==data.length-1&&index!=nbrItem-2){
+      let pointCoordinates = curvePointsArray.reduce((acc,ele)=>{
+        if(ele.split(',').length==data.length-1){
           acc = [...acc,{x:ele.split(',')[4],y:ele.split(',')[5]}];
           return acc;
         }else{
@@ -77,7 +93,7 @@ export default function LineChart({data}) {
         }
       },[{x:curvePointsArray[1].split(',')[0], y:curvePointsArray[1].split(',')[1]}]);
       
-      pointCoordinates = [...pointCoordinates,{x:curvePointsArray[nbrItem-1].split(',')[0], y:curvePointsArray[nbrItem-1].split(',')[1]}];
+      // pointCoordinates = [...pointCoordinates,{x:curvePointsArray[nbrItem-1].split(',')[0], y:curvePointsArray[nbrItem-1].split(',')[1]}];
 
       return {pointCoordinates}
     }
@@ -92,7 +108,6 @@ export default function LineChart({data}) {
       const indexMin = ecarts.indexOf(...minEcart);
       return {x:pointCoordinates[indexMin].x, y:pointCoordinates[indexMin].y, index:indexMin, minEcart:minEcart[0]}
     }
-
 
     const handlerMouseOver =(e)=>{
       const { x, y, index, minEcart} = getNearestPointCoordinate(e);
@@ -112,7 +127,7 @@ export default function LineChart({data}) {
         .attr('fill','black')
         .style('opacity',0.0975)
   
-        //draw circle
+        //draw outer circle
         popup.append('circle')
         .attr('cx',x)
         .attr('cy',y)
@@ -120,7 +135,7 @@ export default function LineChart({data}) {
         .attr('fill','white')
         .style('opacity',0.215)
   
-        //draw circle
+        //draw inner circle
         popup.append('circle')
         .attr('cx',x)
         .attr('cy',y)
@@ -141,6 +156,7 @@ export default function LineChart({data}) {
         .text(`${data[index].duration} min`)
         .attr('text-anchor','middle')
         .attr('font-size','0.8em')
+        .attr('font-weight','500')
         .attr('class',`text${index}`)
   
         const textBox =  popup.select(`.text${index}`).node().getBBox(); // get x,y,hight, width of text already created
@@ -149,31 +165,45 @@ export default function LineChart({data}) {
         .attr('width',textBox.width+2*paddingText)
         .attr('height',textBox.height+2*paddingText)
   
+        if(index==data.length-1){
+          text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
+          infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
+        }else{
+          text.attr('transform',`translate(${textBox.width/2 + paddingText +5},-20)`)
+          infosContainer.attr('transform',`translate(${textBox.width/2 +paddingText+5},-20)`)
+        }
   
-        text.attr('transform',`translate(0,-20)`)
-        infosContainer.attr('transform',`translate(0,-20)`)
       }
 
     }
 
-    svg.append('path')
-    .datum(data)
+    // extend curve
+    const dataExtend = [{day:0,duration:durations[0]},...data,{day:8,duration:durations[days.length-1]}];
+    const daysExtend = dataExtend.map(ele=>ele.day);
+    const durationExtend = dataExtend.map(ele=>ele.duration);
+
+     // axis scales
+     const xScaleExtend = d3.scalePoint()
+     .domain(daysExtend)
+     .range([margin.Left, width-margin.Right])
+     .padding(-0.5);
+
+     
+    const yScaleExtend = d3.scaleLinear()
+    .domain([d3.min(durationExtend)/2,d3.max(durationExtend)])
+    .range([height-margin.Bottom, margin.Top])
+
+     svg.append('path')
+    .datum(dataExtend)
     .attr("fill", "none")
     .attr('d',d3.line()
-      .x((d)=>xScale(d.day))
-      .y((d)=>yScale(d.duration))
-      .curve(d3.curveBasis)
+      .x((d)=>xScaleExtend(d.day))
+      .y((d)=>yScaleExtend(d.duration))
+      .curve(d3.curveBumpX)
     )
-    .attr('class','lineChart')
-    .attr("stroke", "#FFF")
+    .attr("stroke", "white")
     .attr("stroke-width", '2px')
     .attr('opacity',opacity)
-
-
-    // add mouse event to svg
-    d3.select('.svgLine')
-    .on("mousemove",(e)=>handlerMouseOver(e))
-
 
     //-------------- title ----------------------//
     const paddingTop = 40;
