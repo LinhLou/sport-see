@@ -59,19 +59,6 @@ export default function Profil() {
 
 export const  userInfosLoader = async({params})=>{
   const { id } = params;
-  // const res = new CallsAPI('http://localhost:4000/user/',id);
-  // const generalInfos = await res.getUserById();
-  // const activity = await res.getUserActivityById();
-  // const sessions = await res.getUserAverageSession();
-  // const performances = await res.getUserPerformance();
-
   const userData  = await getData(id);
-
-  // const generalInfos = await mockAPI[id].getUserById();
-  // const activity = await mockAPI[id].getUserActivityById();
-  // const sessions = await mockAPI[id].getUserAverageSession();
-  // const performances = await mockAPI[id].getUserPerformance();
-  // { generalInfos, activity, sessions, performances }
-
-  return {userData} 
+  return { userData } 
 }
