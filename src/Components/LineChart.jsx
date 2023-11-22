@@ -2,14 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from "d3";
 
 
-export default function LineChart({data}) {
-
-  const days = data.map(ele=>ele.day);
-  const durations = data.map(ele=>ele.duration);
-
-  const dataExtend = [{day:0,duration:durations[0]},...data,{day:8,duration:durations[days.length-1]}];
-  const daysExtend = dataExtend.map(ele=>ele.day);
-  const durationExtend = dataExtend.map(ele=>ele.duration);
+export default function LineChart({days, durations}) {
+  const daysExtend = [0,...days,8];
+  const durationExtend = [durations[0],...durations,durations[durations.length-1]];
 
   const refLineChart = useRef();
   const width = 258;
@@ -72,11 +67,11 @@ export default function LineChart({data}) {
     // -------------- draw line ------------------//
     // draw line
     svg.append('path')
-    .datum(dataExtend)
+    .datum(daysExtend)
     .attr("fill", "none")
     .attr('d',d3.line()
-      .x((d)=>xScale(d.day))
-      .y((d)=>yScale(d.duration))
+      .x((d)=>xScale(d))
+      .y((d,i)=>yScale(durationExtend[i]))
       .curve(d3.curveBumpX) 
     )
     .attr("stroke", "white")
@@ -160,7 +155,7 @@ export default function LineChart({data}) {
         .attr('x',x)
         .attr('y',y)
         .attr('fill','black')
-        .text(`${dataExtend[index].duration} min`)
+        .text(`${durationExtend[index]} min`)
         .attr('text-anchor','middle')
         .attr('font-size','0.8em')
         .attr('font-weight','500')
@@ -172,7 +167,7 @@ export default function LineChart({data}) {
         .attr('width',textBox.width+2*paddingText)
         .attr('height',textBox.height+2*paddingText)
   
-        if(index==dataExtend.length-2){ // last right popup position
+        if(index==durationExtend.length-2){ // last right popup position
           text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
           infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
         }else{
@@ -203,7 +198,7 @@ export default function LineChart({data}) {
     .attr('x',paddingTop)
     .attr('dy', '1.3em')
 
-  },[data])
+  },[days, durations])
   return (
     <>
       <svg ref={refLineChart}>

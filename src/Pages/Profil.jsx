@@ -15,9 +15,9 @@ import SpiderChart from '../Components/SpiderChart';
 export default function Profil() {
   const { id } = useParams();
   // const divBarChart = useRef();
-  const { generalInfos, activity, sessions, performances } = useLoaderData();
+  // const { generalInfos, activity, sessions, performances } = useLoaderData();
   const { userData } = useLoaderData();
-  console.log(userData)
+  console.log(userData.sessionLength)
   // console.log(generalInfos)
   // generals informations
   // const keyData = Object.values(generalInfos['data'].keyData);
@@ -52,10 +52,10 @@ export default function Profil() {
             <Barchart days ={userData.dates} poids ={userData.poids} calories={userData.calories} />
           </div>
           <div id="otherChats">
-            {/* <div>
-              <LineChart data = {sessionDuration}/>
-            </div>
             <div>
+              <LineChart days={userData.sessionDate} durations={userData.sessionLength} />
+            </div>
+            {/* <div>
               <SpiderChart />
             </div> */}
             <div>
