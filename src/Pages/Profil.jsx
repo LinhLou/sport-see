@@ -14,38 +14,14 @@ import SpiderChart from '../Components/SpiderChart';
 
 export default function Profil() {
   const { id } = useParams();
-  // const divBarChart = useRef();
-  // const { generalInfos, activity, sessions, performances } = useLoaderData();
   const { userData } = useLoaderData();
-  console.log(userData.sessionLength)
-  // console.log(generalInfos)
-  // generals informations
-  // const keyData = Object.values(generalInfos['data'].keyData);
-  // const category = ['Calories','Proteines','Glucides','Lipides'];
-  // const unites = ['kCal','g','g','g'];
-  // weight and daily bruned calories 
-  // const activityQuotidien = activity['data'].sessions.reduce((acc,ele)=>{
-  //   acc = [...acc, {day:formaterDay(ele.day), poid:ele.kilogram, calories:ele.calories}]
-  //   return acc;
-  // },[])
-  // sessions duration
-  // const sessionDuration = sessions['data'].sessions.reduce((acc, ele)=>{
-  //   acc = [...acc, {day:ele.day, duration:ele.sessionLength}];
-  //   return acc;
-  // },[])
-  // performances
-  // const performancesInfos = 
 
-  // console.log(sessionDuration)
   return (
     <PageProfilStyles>
       <div id="header">
         <h1>Bonjour <span>{userData.firstName}</span></h1>
         <p>Félicitation ! Vous avez explosé vos objectifs hier 👏 </p>
       </div>
-      {/* <h2>{activity['data'].sessions[0].day}</h2>
-      <h3>{sessions['data'].sessions[0].day}</h3>
-      <h3>{performances['data'].kind["1"]}</h3> */}
       <div id="container">
         <section id="charts">
           <div id="barchart" >
@@ -55,9 +31,9 @@ export default function Profil() {
             <div>
               <LineChart days={userData.sessionDate} durations={userData.sessionLength} />
             </div>
-            {/* <div>
+            <div>
               <SpiderChart />
-            </div> */}
+            </div>
             <div>
               Radia Bar Chart
             </div>
@@ -65,12 +41,14 @@ export default function Profil() {
         </section>
         <div id="cards">
           {
-            // keyData.map((item, index)=>{
-            //   return(
-            //     <Card key={category[index]} quantity={`${item}${unites[index]}`} category={category[index]} >
-            //     </Card>
-            //   )
-            // })
+            userData.infosKey.map((item, index)=>{
+              const unit = Object.values(userData.units[index])[0];
+              const kind = Object.keys(userData.units[index])[0];
+              return(
+                <Card key={index} quantity={`${item}${unit}`} category={kind} >
+                </Card>
+              )
+            })
 
           }
         </div>
