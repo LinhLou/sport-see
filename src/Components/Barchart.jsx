@@ -1,15 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from "d3";
 
-export default function Barchart({data}) {
+export default function Barchart({days, poids, calories}) {
 
   const refBarChart = useRef();
   const height= 320;
   const width = 835;
   const margin = {Top:112, Right: 90, Bottom:62, Left:43};
-  const days = data.map(ele=>ele.day);
-  const poids = data.map(ele=>ele.poid);
-  const calories = data.map(ele=>ele.calories);
   const upCalorie = Math.max(...calories);
   const lowCalorie = Math.min(...calories);
   const lowPoid = Math.floor(Math.min(...poids))-1;
@@ -17,7 +14,6 @@ export default function Barchart({data}) {
   const paddingBarPopUp = 15;
   const paddingTextPopup = 5;
   const color = d3.scaleOrdinal(["Calories brûlées (Kcal)", "Poids (kg)"], ["red","black"]);
-
 
   useEffect(()=>{
     //------------ set up svg------------------------//
@@ -29,7 +25,7 @@ export default function Barchart({data}) {
 
     //----------- set up axis --------------------------//
     const xScale = d3.scaleBand()
-    .domain(data.map(d=>d.day))
+    .domain(days)
     .range([margin.Left,width-margin.Right])
     .paddingInner(0.8)
 
@@ -99,26 +95,27 @@ export default function Barchart({data}) {
 
 
     const handlerMouseOver = (e,d)=>{
-      svg.select(`.popup${d.day}`).attr('fill','#c4c4c480');
+      const index = days.indexOf(days.filter(ele=>ele===d)[0]);
+      svg.select(`.popup${d}`).attr('fill','#c4c4c480');
       
       // create text box pop-up
       const textContainer = svg.append('g')
       .append('rect')
       .attr("fill", "red")
-      .attr('class',`popup-textContainer${d.day}`)
+      .attr('class',`popup-textContainer${d}`)
   
       const textPopup = svg.append('g')
       .append('text')
-      .attr('x',xScale(d.day))
-      .attr('y',d3.min([yPoidScale(d.poid), yCaloScale(d.calories)])+paddingBarPopUp-paddingTextPopup)
+      .attr('x',xScale(d))
+      .attr('y',d3.min([yPoidScale(poids[index]), yCaloScale(calories[index])])+paddingBarPopUp-paddingTextPopup)
       .attr('fill','white')
       .style('font-size','0.7em')
-      .attr('class',`popup-text${d.day}`)
+      .attr('class',`popup-text${d}`)
   
-      textPopup.append('tspan').text(`${d.poid}kg`).attr("text-anchor", "middle")
-      textPopup.append('tspan').text(`${d.calories}Kcal`).attr('dy','2em').attr('x',xScale(d.day)).attr("text-anchor", "middle")
+      textPopup.append('tspan').text(`${poids[index]}kg`).attr("text-anchor", "middle")
+      textPopup.append('tspan').text(`${calories[index]}Kcal`).attr('dy','2em').attr('x',xScale(d)).attr("text-anchor", "middle")
 
-      const textBBox = svg.select(`.popup-text${d.day}`).node().getBBox(); // get x,y,hight, width of text already created
+      const textBBox = svg.select(`.popup-text${d}`).node().getBBox(); // get x,y,hight, width of text already created
 
       textPopup.attr('transform',`translate(${textBBox.width + xScale.bandwidth()+5},-${textBBox.height/2 + 3*paddingTextPopup})`)
   
@@ -129,39 +126,38 @@ export default function Barchart({data}) {
       .attr('transform',`translate(${textBBox.width + xScale.bandwidth()+5}, -${textBBox.height/2 + 3*paddingTextPopup})`)
     }
     
-
     const handlerMouseOut = (e,d)=>{
-      svg.select(`.popup${d.day}`).attr('fill','transparent');
-      svg.select(`.popup-textContainer${d.day}`).remove();
-      svg.select(`.popup-text${d.day}`).remove();
+      svg.select(`.popup${d}`).attr('fill','transparent');
+      svg.select(`.popup-textContainer${d}`).remove();
+      svg.select(`.popup-text${d}`).remove();
     }
 
     // pop-up
     svg.append('g')
     .attr('fill','transparent')
     .selectAll()
-    .data(data)
+    .data(days)
     .join('path')
-    .attr("d", d =>{ const y = d3.min([yPoidScale(d.poid), yCaloScale(d.calories)]); 
+    .attr("d", (d,i) =>{ const y = d3.min([yPoidScale(poids[i]), yCaloScale(calories[i])]); 
       let h;
-      if(y==yPoidScale(d.poid)){
-        h = yPoidScale(lowPoid)-yPoidScale(d.poid);
+      if(y==yPoidScale(poids[i])){
+        h = yPoidScale(lowPoid)-yPoidScale(poids[i]);
       }else{
-        h = yCaloScale(lowCalorie/10)-yCaloScale(d.calories);
+        h = yCaloScale(lowCalorie/10)-yCaloScale(calories[i]);
       }
-      return roundedRect(xScale(d.day),y, h + paddingBarPopUp, xScale.bandwidth()+paddingBarPopUp*2,0)})
-    .attr('transform',d=>`translate(${-paddingBarPopUp},${-paddingBarPopUp})`)
-    .attr('class',(d)=>`popup${d.day}`)
+      return roundedRect(xScale(d),y, h + paddingBarPopUp, xScale.bandwidth()+paddingBarPopUp*2,0)})
+    .attr('transform',`translate(${-paddingBarPopUp},${-paddingBarPopUp})`)
+    .attr('class',(d)=>`popup${d}`)
 
 
 
     // poids bar
     svg.append('g')
     .selectAll()
-    .data(data)
+    .data(days)
     .enter()
     .append('path')
-    .attr('d', d=>roundedRect(xScale(d.day),yPoidScale(d.poid),yPoidScale(lowPoid)-yPoidScale(d.poid),xScale.bandwidth()/3,xScale.bandwidth()/6))
+    .attr('d', (d,i)=>roundedRect(xScale(d),yPoidScale(poids[i]),yPoidScale(lowPoid)-yPoidScale(poids[i]),xScale.bandwidth()/3,xScale.bandwidth()/6))
     .attr('fill',color("Poids (kg)"))
     .on("mouseover", (e,d) =>handlerMouseOver(e,d))
     .on("mouseout", (e,d)=>handlerMouseOut(e,d))
@@ -171,12 +167,12 @@ export default function Barchart({data}) {
     svg.append('g')
          .style('fill',color("Calories brûlées (Kcal)"))
        .selectAll()
-       .data(data)
+       .data(days)
        .enter()
        .append('path')
-        .attr("d", d =>roundedRect(xScale(d.day),yCaloScale(d.calories),yCaloScale(lowCalorie/10)-yCaloScale(d.calories),xScale.bandwidth()/3,xScale.bandwidth()/6))
+        .attr("d", (d,i) =>roundedRect(xScale(d),yCaloScale(calories[i]),yCaloScale(lowCalorie/10)-yCaloScale(calories[i]),xScale.bandwidth()/3,xScale.bandwidth()/6))
         .attr('transform',`translate(${xScale.bandwidth()/3*2},0)`)
-        .on("mouseover", (e,d) =>handlerMouseOver(e,d))
+        .on("mouseover", (e,d,i) =>handlerMouseOver(e,d,i))
         .on("mouseout", (e,d)=>handlerMouseOut(e,d))
 
     // ---------- title -----------------------------//
@@ -215,7 +211,7 @@ export default function Barchart({data}) {
     .style('fill', color)
     .attr('transform',`translate(-15,0)`)   
 
-  },[data])
+  },[days, poids, calories])
 
   return (
     <>
