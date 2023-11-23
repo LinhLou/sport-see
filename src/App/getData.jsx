@@ -21,7 +21,7 @@ export const getData = async (id) =>{
   //------------------get data from API ------------------
   // const res = new CallsAPI('http://localhost:4000/user/',id);
 
-  // const {userInfos, score, keyData } = await res.getUserById();
+  // const {userInfos, score, todayScore, keyData } = await res.getUserById();
   // const { sessions } = await res.getUserActivityById();
   // const result = await res.getUserAverageSession();
   // const { kind, data } = await res.getUserPerformance();
@@ -33,7 +33,7 @@ export const getData = async (id) =>{
   const result3 = await mockAPI[id].getUserAverageSession();
   const result4 = await mockAPI[id].getUserPerformance();
 
-  const { userInfos, score, keyData } = result1["data"];
+  const { userInfos, score, todayScore, keyData } = result1["data"];
   const { sessions } = result2["data"];
   const averageSessions = result3["data"].sessions;
   const { kind, data } = result4["data"];
@@ -45,7 +45,7 @@ export const getData = async (id) =>{
     name:userInfos.firstName,
     lastName:userInfos.lastName,
     age:userInfos.age,
-    score:score,
+    score:(()=> score ? score:todayScore)() ,
     infosKey: Object.values(keyData),
     units: [{'Calories':'kCal'},{'Proteines':'g'},{'Glucides':'g'},{'Lipides':'g'}], 
     dates : sessions.map(ele=>formaterDay(ele.day)),
@@ -62,7 +62,7 @@ export const getData = async (id) =>{
     },[])
 
   }
-
+  console.log(userData)
   return userData
   
 }

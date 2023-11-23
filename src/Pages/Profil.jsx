@@ -6,6 +6,7 @@ import Card from '../Components/Card';
 import Barchart from '../Components/Barchart';
 import LineChart from '../Components/LineChart';
 import SpiderChart from '../Components/SpiderChart';
+import RadarBarChart from '../Components/RadarBarChart';
 
 
 
@@ -32,7 +33,7 @@ export default function Profil() {
               <SpiderChart performance={ userData.performance }/>
             </div>
             <div>
-              Radia Bar Chart
+              <RadarBarChart score={userData.score}/>
             </div>
           </div>
         </section>
