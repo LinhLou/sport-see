@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useLoaderData } from 'react-router-dom';
 import PageProfilStyles from '../Styles/pageProfil.styled';
-import mockAPI from '../App/mockAPI';
-import CallsAPI from '../App/callsAPI';
 import { getData } from '../App/getData';
-import { formaterDay } from '../App/formaterData';
 import Card from '../Components/Card';
 import Barchart from '../Components/Barchart';
 import LineChart from '../Components/LineChart';

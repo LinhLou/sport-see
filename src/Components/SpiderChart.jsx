@@ -3,9 +3,10 @@ import * as d3 from "d3";
 
 export default function SpiderChart({data}) {
   const refSpiderChart = useRef();
-  const width = 258;
-  const height = 258;
-  const step = 18;
+  const width = 350;
+  const height = 350;
+  const margin = 60;
+  const step = 10;
   const referenceData = Array(5).fill(1).map((ele,index)=>(index+1)*step);
 
   useEffect(()=>{
@@ -17,28 +18,47 @@ export default function SpiderChart({data}) {
     .style('border-radius','5px')
     .attr('class','svgSpider')
 
-    // -------------- draw hexagone -----------------//
+    //----------------- set up axis------------------//
+    const xScale = d3.scaleLinear()
+    .domain([-d3.max(referenceData),d3.max(referenceData)])
+    .range([margin, width-margin])
+    const yScale = d3.scaleLinear()
+    .domain([-d3.max(referenceData),d3.max(referenceData)])
+    .range([height-margin, margin])
 
-    const hexagoneDraw = (step)=>{
-      let path = `M${Math.sin(0)*step},${Math.cos(0)*step}`;
+    // const xAxis = d3.axisBottom(xScale)
+    // const yAxis = d3.axisLeft(yScale)
+
+    // svg.append('g')
+    // .attr('transform',`translate(0,${height/2})`)
+    // .call(xAxis)
+
+    // svg.append('g')
+    // .attr('transform',`translate(${width/2},0)`)
+    // .call(yAxis)
+
+    // -------------- draw hexagone -----------------//
+    const taux = (width-2*margin)/d3.max(referenceData)/2;
+    const hexagoneDraw = (x0,y0,step)=>{
+      let path = `M${x0},${y0}`;
       for(let i=1;i<=5;i++){
-        path +=`L${Math.sin(Math.PI/3*i)*step},${Math.cos(Math.PI/3*i)*step}`
+        const dx = Math.sin(Math.PI/3*i)*step;
+        const dy = [1-Math.cos(Math.PI/3*i)]*step;
+        path +=`L${x0+dx},${y0+dy}`;
       }
       path +=`Z`;
       return path
     }
-    
 
     const hexagone = svg.append('g')
     .selectAll()
     .data(referenceData)
     .join('path')
-    .attr('d',d=>hexagoneDraw(d))
+    .attr('d',d=>hexagoneDraw(xScale(0),yScale(d),d*taux))
     .attr('stroke',"white")
     .attr('stroke-width','0.05em')
     .attr('fill','transparent')
 
-    hexagone.attr('transform',`translate(${width/2},${height/2})`);
 
     const legends = ['Endurance','Force','Vitesse','Intensité','Cardio','Energie'];
 
@@ -47,8 +67,8 @@ export default function SpiderChart({data}) {
     .selectAll('text')
     .data(legends)
     .join('text')
-    .attr('x',(d,i)=>Math.sin(Math.PI/3*i)*(Math.max(...referenceData)+5))
-    .attr('y',(d,i)=>Math.cos(Math.PI/3*i)*(Math.max(...referenceData)+5))
+    .attr('x',(d,i)=>Math.sin(Math.PI/3*i)*(width/2-margin+margin/4))
+    .attr('y',(d,i)=>Math.cos(Math.PI/3*i)*(height/2-margin+margin/4))
     .text(d=>d)
     .attr('fill','white')
     .attr('text-anchor',(d,i)=>{
@@ -64,7 +84,7 @@ export default function SpiderChart({data}) {
     .style("font-size", "0.8em")
     .attr('transform',(d,i)=>{
       if(i==0||i==1||i==5){
-        return `translate(${width/2},${height/2+10})`
+        return `translate(${width/2},${height/2+margin/4})`
       }else{
         return `translate(${width/2},${height/2})`
       }

@@ -7,8 +7,8 @@ export default function LineChart({days, durations}) {
   const durationExtend = [durations[0],...durations,durations[durations.length-1]];
 
   const refLineChart = useRef();
-  const width = 258;
-  const height = 258;
+  const width = 300;
+  const height = 300;
   const margin = {Top:100, Right:0, Bottom:50, Left:0};
   const opacity = 0.5;
 

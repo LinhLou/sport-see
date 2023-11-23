@@ -18,24 +18,27 @@ const formaterDay = (day) => {
 
 
 export const getData = async (id) =>{
-  const res = new CallsAPI('http://localhost:4000/user/',id);
+  //------------------get data from API ------------------
+  // const res = new CallsAPI('http://localhost:4000/user/',id);
 
-  const {userInfos, score, keyData } = await res.getUserById();
-  const { sessions } = await res.getUserActivityById();
-  const result = await res.getUserAverageSession();
-  const { kind, data } = await res.getUserPerformance();
-  const averageSessions = result.sessions;
+  // const {userInfos, score, keyData } = await res.getUserById();
+  // const { sessions } = await res.getUserActivityById();
+  // const result = await res.getUserAverageSession();
+  // const { kind, data } = await res.getUserPerformance();
+  // const averageSessions = result.sessions;
 
+  // --------------get data from mock API---------------------
+  const result1 = await mockAPI[id].getUserById();
+  const result2 = await mockAPI[id].getUserActivityById();
+  const result3 = await mockAPI[id].getUserAverageSession();
+  const result4 = await mockAPI[id].getUserPerformance();
 
-  // const generalInfos = await mockAPI[id].getUserById();
-  // const activity = await mockAPI[id].getUserActivityById();
-  // const result = await mockAPI[id].getUserAverageSession();
-  // const performances = await mockAPI[id].getUserPerformance();
+  const { userInfos, score, keyData } = result1["data"];
+  const { sessions } = result2["data"];
+  const averageSessions = result3["data"].sessions;
+  const { kind, data } = result4["data"];
 
-  // const { userInfos, score, keyData } = generalInfos["data"];
-  // const { sessions } = activity["data"];
-  // const averageSessions = result["data"].sessions;
-  // const { kind, data } = performances["data"];
+  // ------------------------------------------------------------
 
   const performance = data.reduce((acc,ele)=>{
     const obj = {};
@@ -60,8 +63,6 @@ export const getData = async (id) =>{
     performanceKind: performance.map(ele=>Object.keys(ele)),
     performanceValue: performance.map(ele=>Object.values(ele))
   }
-
-  console.log(userData)
 
   return userData
   
