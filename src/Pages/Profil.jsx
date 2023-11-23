@@ -29,7 +29,7 @@ export default function Profil() {
               <LineChart days={userData.sessionDate} durations={userData.sessionLength} />
             </div>
             <div>
-              <SpiderChart />
+              <SpiderChart performance={ userData.performance }/>
             </div>
             <div>
               Radia Bar Chart

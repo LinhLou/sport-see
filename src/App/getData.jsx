@@ -40,13 +40,6 @@ export const getData = async (id) =>{
 
   // ------------------------------------------------------------
 
-  const performance = data.reduce((acc,ele)=>{
-    const obj = {};
-    const key = kind[ele.kind.toString()];
-    obj[key] = ele.value;
-    acc = [...acc,obj];
-    return acc
-  },[])
 
   const userData = {
     name:userInfos.firstName,
@@ -60,8 +53,14 @@ export const getData = async (id) =>{
     calories: sessions.map(ele=>(ele.calories)),
     sessionDate: averageSessions.map(ele=>ele.day),
     sessionLength: averageSessions.map(ele=>ele.sessionLength),
-    performanceKind: performance.map(ele=>Object.keys(ele)),
-    performanceValue: performance.map(ele=>Object.values(ele))
+    performance : data.reduce((acc,ele)=>{
+      const obj = {};
+      const key = kind[ele.kind.toString()];
+      obj[key] = ele.value;
+      acc = [...acc,obj];
+      return acc
+    },[])
+
   }
 
   return userData
