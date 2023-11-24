@@ -17,7 +17,7 @@ export default function Profil() {
   return (
     <PageProfilStyles>
       <div id="header">
-        <h1>Bonjour <span>{userData.firstName}</span></h1>
+        <h1>Bonjour <span>{userData.name}</span></h1>
         <p>Félicitation ! Vous avez explosé vos objectifs hier 👏 </p>
       </div>
       <div id="container">

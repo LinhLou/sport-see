@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
 export default function RadarBarChart({ score }) {
-  console.log(score)
+
   const refRadarBarChart =  useRef();
   const width = 350;
   const height = 350;
@@ -48,9 +48,7 @@ export default function RadarBarChart({ score }) {
     .attr('x',margin/2)
     .attr('y',margin-thickness/2)
     .text('Score')
-    .style('font-size','1.2em')
-
-    const rate = score*100;
+    .style('font-size','2em')
   
 
     const textCenter = svg.append('g')
@@ -58,24 +56,27 @@ export default function RadarBarChart({ score }) {
     .attr('x',width/2)
     .attr('y',height/2)
     .attr('text-anchor','middle')
+    
 
      textCenter.append('tspan')
      .text(`${score*100}%`)
      .attr('font-weight','700')
-     .attr('font-size','1.6em')
+     .attr('font-size','2.5em')
 
      textCenter.append('tspan')
      .attr('x',width/2)
-     .attr('dy','2em')
+     .attr('dy','1.5em')
      .text('de votre')
      .attr('fill','#74798C')
      .attr('font-weight','500')
+     .attr('font-size','1.5em')
      textCenter.append('tspan')
      .attr('x',width/2)
-     .attr('dy','2em')
+     .attr('dy','1.54em')
      .text('objectif')
      .attr('fill','#74798C')
      .attr('font-weight','500')
+     .attr('font-size','1.5em')
 
   },[score])
 

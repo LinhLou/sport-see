@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 const LayoutStyled = styled.div`
-  min-height: 768px;
-  min-width: 1024px;
+  min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 91px 1fr;
@@ -46,10 +45,12 @@ const LayoutStyled = styled.div`
   }
   aside{
     width: 117px;
+    padding-top:250px;
+    padding-bottom: 20px;
     background-color: black;
-    padding-top: 256px;
-    display: grid;
-    grid-template-rows: min-content 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     color: white;
 
     div{
@@ -67,7 +68,6 @@ const LayoutStyled = styled.div`
     }
     #copyrigth{
       justify-content:flex-end;
-      padding-bottom: 59px;
       p{
         writing-mode:vertical-rl;
         transform:rotate(-180deg);

@@ -6,7 +6,7 @@ export default function Barchart({days, poids, calories}) {
   const refBarChart = useRef();
   const height= 320;
   const width = 835;
-  const margin = {Top:112, Right: 90, Bottom:62, Left:43};
+  const margin = {Top:112, Right: 110, Bottom:62, Left:43};
   const upCalorie = Math.max(...calories);
   const lowCalorie = Math.min(...calories);
   const lowPoid = Math.floor(Math.min(...poids))-1;
@@ -20,8 +20,7 @@ export default function Barchart({days, poids, calories}) {
     const svg = d3.select(refBarChart.current)
                     .attr("preserveAspectRatio", "xMidYMid meet")
                     .attr('viewBox',[0, 0, width, height])
-                    .style('background','#FBFBFB')
-                    // .style('background','red')
+                    .attr('background-color', '#FBFBFB')
 
     //----------- set up axis --------------------------//
     const xScale = d3.scaleBand()
@@ -60,7 +59,7 @@ export default function Barchart({days, poids, calories}) {
    // styles to axis
     svg.selectAll('.tick text')
         .style('color','#9B9EAC')
-        .style('font-size','2em')
+        .style('font-size','2.4em')
     svg.selectAll('.yAxis .domain')
       .remove()
     svg.selectAll('.yAxis line')
@@ -109,7 +108,7 @@ export default function Barchart({days, poids, calories}) {
       .attr('x',xScale(d))
       .attr('y',d3.min([yPoidScale(poids[index]), yCaloScale(calories[index])])+paddingBarPopUp-paddingTextPopup)
       .attr('fill','white')
-      .style('font-size','0.7em')
+      .style('font-size','1em')
       .attr('class',`popup-text${d}`)
   
       textPopup.append('tspan').text(`${poids[index]}kg`).attr("text-anchor", "middle")
@@ -179,12 +178,13 @@ export default function Barchart({days, poids, calories}) {
     svg.append("text")
           .attr("x", margin.Left)
           .attr("y", margin.Top/2)
-          .style("font-size", "1.2em")
-          .text("Activité quoitidienne");
+          .style("font-size", "1.8em")
+          .text("Activité quoitidienne")
+          .attr('class','titleBarChart')
 
     // ----------- legend --------------------------//
 
-    const legendSpacing = 230;
+    const legendSpacing = 300;
     let textWidth = [];
     const legend = svg.selectAll('.legend')
     .data(color.domain())
@@ -196,7 +196,7 @@ export default function Barchart({days, poids, calories}) {
     legend.append('text')
     .text(d=>d)
     .attr('transform',(d,i)=>`translate(${width-margin.Right/3-i*legendSpacing},${margin.Top/2})`)
-    .style('font-size','1em')
+    .style('font-size','1.6em')
     .attr('fill','#74798C')
     .attr("text-anchor", "end")
     .each(function(d,i) {

@@ -8,7 +8,12 @@ const CardStyles = styled.div`
   justify-content: start;
   align-items: center;
   gap:24px;
-  padding: 32px;
+  padding-left: 24px;
+  padding-right:24px;
+  svg {
+    width:50px;
+    height:50px;
+  }
   div{
     height: fit-content;
     padding:0;

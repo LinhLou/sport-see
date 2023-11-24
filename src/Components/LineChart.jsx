@@ -7,9 +7,9 @@ export default function LineChart({days, durations}) {
   const durationExtend = [durations[0],...durations,durations[durations.length-1]];
 
   const refLineChart = useRef();
-  const width = 300;
-  const height = 300;
-  const margin = {Top:100, Right:0, Bottom:50, Left:0};
+  const width = 350;
+  const height = 350;
+  const margin = {Top:140, Right:0, Bottom:50, Left:0};
   const opacity = 0.5;
 
   useEffect(()=>{
@@ -60,7 +60,7 @@ export default function LineChart({days, durations}) {
     svg.selectAll('.tick text')
     .style('color',"white")
     .style('opacity',opacity)
-    .style('font-size','1.2em')
+    .style('font-size','2.5em')
     .attr('transform','translate(0,10)')
 
     
@@ -75,7 +75,7 @@ export default function LineChart({days, durations}) {
       .curve(d3.curveBumpX) 
     )
     .attr("stroke", "white")
-    .attr("stroke-width", '2px')
+    .attr("stroke-width", '0.2em')
     .attr('opacity',opacity)
     .attr('class','lineChart')
 
@@ -157,7 +157,7 @@ export default function LineChart({days, durations}) {
         .attr('fill','black')
         .text(`${durationExtend[index]} min`)
         .attr('text-anchor','middle')
-        .attr('font-size','0.8em')
+        .attr('font-size','1.5em')
         .attr('font-weight','500')
         .attr('class',`text${index}`)
   
@@ -167,7 +167,7 @@ export default function LineChart({days, durations}) {
         .attr('width',textBox.width+2*paddingText)
         .attr('height',textBox.height+2*paddingText)
   
-        if(index==durationExtend.length-2){ // last right popup position
+        if(index==durationExtend.length-2||index==durationExtend.length-3){ // last right popup position
           text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
           infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
         }else{
@@ -187,7 +187,7 @@ export default function LineChart({days, durations}) {
     .attr('x',paddingTop)
     .attr('y',margin.Top/2)
     .attr('fill','#FFF')
-    .attr('font-size','1.2em')
+    .attr('font-size','2em')
     .attr('opacity',opacity)
 
     title.append('tspan')
@@ -196,7 +196,7 @@ export default function LineChart({days, durations}) {
     title.append('tspan')
     .text('sessions')
     .attr('x',paddingTop)
-    .attr('dy', '1.3em')
+    .attr('dy', '1.2em')
 
   },[days, durations])
   return (

@@ -40,7 +40,6 @@ export const getData = async (id) =>{
 
   // ------------------------------------------------------------
 
-
   const userData = {
     name:userInfos.firstName,
     lastName:userInfos.lastName,
@@ -62,7 +61,6 @@ export const getData = async (id) =>{
     },[])
 
   }
-  console.log(userData)
   return userData
   
 }

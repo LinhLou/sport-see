@@ -10,7 +10,7 @@ export default function SpiderChart({ performance }) {
   const refSpiderChart = useRef();
   const width = 350;
   const height = 350;
-  const margin = 60;
+  const margin = 90;
   const step = maxPerformance/5;
   const referenceData = Array(5).fill(1).map((ele,index)=>(index+1)*step);
 
@@ -50,7 +50,7 @@ export default function SpiderChart({ performance }) {
     .join('path')
     .attr('d',d=>hexagoneDraw(xScale(0),yScale(d),d*taux))
     .attr('stroke',"white")
-    .attr('stroke-width','0.05em')
+    .attr('stroke-width','0.1em')
     .attr('fill','transparent')
     //  ---------------------- draw radarChart-------------------//
     const coordinatesCalcul = (values)=>{
@@ -94,7 +94,6 @@ export default function SpiderChart({ performance }) {
         return 'end'
       }
     })
-    .style("font-size", "0.8em")
     .attr('transform',(d,i)=>{
       switch(i){
         case 0 :
@@ -111,6 +110,8 @@ export default function SpiderChart({ performance }) {
           return `translate(${margin/6},${-margin/8})`
       }
     })
+    .attr("font-size", "1.6em")
+    .attr('font-weigth',500)
 
   },[performance])
   return (

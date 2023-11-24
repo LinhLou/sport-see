@@ -22,7 +22,7 @@ const PageProfilStyles = styled.div`
     }
     p{
       margin:41px 0 0;
-      font-size: 18px;
+      font-size: 20px;
     }
   }
   & #container{
@@ -35,7 +35,6 @@ const PageProfilStyles = styled.div`
     & #charts{
       display: flex;
       flex-direction: column;
-      /* grid-template-rows: 1fr 1fr; */
       gap:28px;
       & #barchart{
         background-color: #FBFBFB;
@@ -46,12 +45,7 @@ const PageProfilStyles = styled.div`
       & #otherChats{
         display:grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap:30px;
-        div{
-          /* border: 2px solid blue; */
-          /* overflow: hidden; */
-
-        }
+        gap:25px;
       }
       div{
         background-color: #FBFBFB;
