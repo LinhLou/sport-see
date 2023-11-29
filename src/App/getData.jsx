@@ -19,19 +19,19 @@ const formaterDay = (day) => {
 
 export const getData = async (id) =>{
   //------------------get data from API ------------------
+
   // const res = new CallsAPI('http://localhost:4000/user/',id);
 
-  // const {userInfos, score, todayScore, keyData } = await res.getUserById();
-  // const { sessions } = await res.getUserActivityById();
-  // const result = await res.getUserAverageSession();
-  // const { kind, data } = await res.getUserPerformance();
-  // const averageSessions = result.sessions;
-
   // --------------get data from mock API---------------------
-  const result1 = await mockAPI[id].getUserById();
-  const result2 = await mockAPI[id].getUserActivityById();
-  const result3 = await mockAPI[id].getUserAverageSession();
-  const result4 = await mockAPI[id].getUserPerformance();
+  const res = mockAPI[id];
+
+  // --------------------------------------------------------
+
+  const result1 = await res.getUserById();
+  const result2 = await res.getUserActivityById();
+  const result3 = await res.getUserAverageSession();
+  const result4 = await res.getUserPerformance();
+
 
   const { userInfos, score, todayScore, keyData } = result1["data"];
   const { sessions } = result2["data"];

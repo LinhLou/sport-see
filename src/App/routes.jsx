@@ -3,6 +3,7 @@ import Profil, { userInfosLoader } from '../Pages/Profil';
 import Acceuil from '../Pages/Acceuil';
 import Reglage from '../Pages/Reglage';
 import Communaute from '../Pages/Communaute';
+import Error from '../Pages/Error';
 import Layout from '../Components/Layout';
 
 const router = createBrowserRouter(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
         path= '/user/:id'
         loader={userInfosLoader}
         element={<Profil />}
+        errorElement = {<Error />}
       />
       <Route
         path= 'reglage'

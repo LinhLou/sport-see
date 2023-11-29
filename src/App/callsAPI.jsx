@@ -1,3 +1,11 @@
+
+const jsonOrThrowIfError = async (response) => {
+  if (!response.ok) throw new Error((await response.json()).message);
+  // const { data } = await response.json(); 
+  return await response.json();
+};
+
+
 class CallsAPI {
   constructor(baseURL,Id){
     this.baseURL = baseURL;
@@ -5,27 +13,19 @@ class CallsAPI {
   }
  
   async getUserById () {
-    const res = await fetch(`${this.baseURL}${this.Id}`);
-    const { data } = await res.json();
-    return data;
+    return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}`));
   }
 
   async getUserActivityById (){
-    const res = await fetch(`${this.baseURL}${this.Id}/activity`);
-    const { data } = await res.json();
-    return data;
+    return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}/activity`));
   }
 
   async getUserAverageSession(){
-    const res = await fetch(`${this.baseURL}${this.Id}/average-sessions`);
-    const { data } = await res.json();
-    return data;
+    return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}/average-sessions`));
   }
 
   async getUserPerformance(){
-    const res = await fetch(`${this.baseURL}${this.Id}/performance`);
-    const { data } = await res.json();
-    return data;
+    return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}/performance`));
   }
 }
 

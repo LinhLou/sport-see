@@ -11,7 +11,6 @@ import RadarBarChart from '../Components/RadarBarChart';
 
 
 export default function Profil() {
-  const { id } = useParams();
   const { userData } = useLoaderData();
 
   return (
