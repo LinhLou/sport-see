@@ -178,7 +178,7 @@ export default function Barchart({days, poids, calories}) {
     svg.append("text")
           .attr("x", margin.Left)
           .attr("y", margin.Top/2)
-          .style("font-size", "1.8em")
+          .style("font-size", "1.5em")
           .text("Activité quoitidienne")
           .attr('class','titleBarChart')
 
@@ -196,7 +196,7 @@ export default function Barchart({days, poids, calories}) {
     legend.append('text')
     .text(d=>d)
     .attr('transform',(d,i)=>`translate(${width-margin.Right/3-i*legendSpacing},${margin.Top/2})`)
-    .style('font-size','1.6em')
+    .style('font-size','1.3em')
     .attr('fill','#74798C')
     .attr("text-anchor", "end")
     .each(function(d,i) {
