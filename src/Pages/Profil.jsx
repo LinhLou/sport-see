@@ -59,3 +59,5 @@ export const  userInfosLoader = async({params})=>{
   const userData  = await getData(id);
   return { userData } 
 }
+
+

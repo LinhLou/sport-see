@@ -5,6 +5,12 @@ import Reglage from '../Pages/Reglage';
 import Communaute from '../Pages/Communaute';
 import Error from '../Pages/Error';
 import Layout from '../Components/Layout';
+import { useRouteError } from 'react-router-dom';
+
+function ErrorBoundary() {
+  let error = useRouteError();
+  return <Error message={error.message}/>
+}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,7 +23,7 @@ const router = createBrowserRouter(
         path= '/user/:id'
         loader={userInfosLoader}
         element={<Profil />}
-        errorElement = {<Error />}
+        errorElement = {<ErrorBoundary />}
       />
       <Route
         path= 'reglage'

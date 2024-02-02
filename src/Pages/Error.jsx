@@ -1,7 +1,8 @@
-import React from 'react'
+import React from 'react';
+import ErrorStyles from '../Styles/pageError.styled';
 
-export default function Error() {
+export default function Error({message}) {
   return (
-    <h1>Error</h1>
+    <ErrorStyles>{message}</ErrorStyles>
   )
 }
