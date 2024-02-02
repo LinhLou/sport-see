@@ -63,8 +63,8 @@ export const getData = async (id) =>{
     }
     return userData
 
-  } catch (error) {
-    throw new Error("user not found!!!");
+  } catch (err) {
+    throw new Error(err.message);
   }
   
 }

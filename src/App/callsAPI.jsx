@@ -1,7 +1,7 @@
 
 const jsonOrThrowIfError = async (response) => {
   if (!response.ok) {
-    throw new Error((await response.json()).message); 
+    throw new Error((await response.json())); 
   }
   return await response.json();
 };
@@ -14,7 +14,7 @@ class CallsAPI {
   }
  
   async getUserById () {
-    return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}`));
+      return jsonOrThrowIfError(await fetch(`${this.baseURL}${this.Id}`));
   }
 
   async getUserActivityById (){
