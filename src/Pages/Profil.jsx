@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useLoaderData } from 'react-router-dom';
+import React from 'react';
+import { useLoaderData } from 'react-router-dom';
 import PageProfilStyles from '../Styles/pageProfil.styled';
-import { getData } from '../App/getData';
+import UserData from '../App/getData';
 import Card from '../Components/Card';
 import Barchart from '../Components/Barchart';
 import LineChart from '../Components/LineChart';
@@ -56,8 +56,13 @@ export default function Profil() {
 
 export const  userInfosLoader = async({params})=>{
   const { id } = params;
-  const userData  = await getData(id);
-  return { userData } 
+  const data = new UserData(id);
+  try{
+    const userData  = await data.getData('API');
+    return { userData } 
+  }catch(err){
+    throw new Error("can not get user");
+  }
 }
 
 
