@@ -94,6 +94,10 @@ export default function Barchart({days, poids, calories}) {
 
 
     const handlerMouseOver = (e,d)=>{
+      svg.select(`.popup${d}`).attr('fill','transparent');
+      svg.select(`.popup-textContainer${d}`).remove();
+      svg.select(`.popup-text${d}`).remove();
+
       const index = days.indexOf(days.filter(ele=>ele===d)[0]);
       svg.select(`.popup${d}`).attr('fill','#c4c4c480');
       
@@ -147,6 +151,8 @@ export default function Barchart({days, poids, calories}) {
       return roundedRect(xScale(d),y, h + paddingBarPopUp, xScale.bandwidth()+paddingBarPopUp*2,0)})
     .attr('transform',`translate(${-paddingBarPopUp},${-paddingBarPopUp})`)
     .attr('class',(d)=>`popup${d}`)
+    .on("mouseover", (e,d) =>handlerMouseOver(e,d))
+    .on("mouseout", (e,d)=>handlerMouseOut(e,d))
 
 
 
@@ -159,7 +165,7 @@ export default function Barchart({days, poids, calories}) {
     .attr('d', (d,i)=>roundedRect(xScale(d),yPoidScale(poids[i]),yPoidScale(lowPoid)-yPoidScale(poids[i]),xScale.bandwidth()/3,xScale.bandwidth()/6))
     .attr('fill',color("Poids (kg)"))
     .on("mouseover", (e,d) =>handlerMouseOver(e,d))
-    .on("mouseout", (e,d)=>handlerMouseOut(e,d))
+
 
     // calories bar
 
@@ -171,8 +177,7 @@ export default function Barchart({days, poids, calories}) {
        .append('path')
         .attr("d", (d,i) =>roundedRect(xScale(d),yCaloScale(calories[i]),yCaloScale(lowCalorie/10)-yCaloScale(calories[i]),xScale.bandwidth()/3,xScale.bandwidth()/6))
         .attr('transform',`translate(${xScale.bandwidth()/3*2},0)`)
-        .on("mouseover", (e,d,i) =>handlerMouseOver(e,d,i))
-        .on("mouseout", (e,d)=>handlerMouseOut(e,d))
+        .on("mouseover", (e,d) =>handlerMouseOver(e,d))
 
     // ---------- title -----------------------------//
     svg.append("text")

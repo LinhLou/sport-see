@@ -7,6 +7,5 @@ export const resource=(service,id)=>{
       return new CallsAPI('http://localhost:4000/user/',id);
     case "mock":
       return mockAPI[id];
-      
   }
 }

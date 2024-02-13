@@ -58,7 +58,8 @@ export const  userInfosLoader = async({params})=>{
   const { id } = params;
   const data = new UserData(id);
   try{
-    const userData  = await data.getData('API');
+    const userData  = await data.getData('mock');
+    // const userData  = await data.getData('API');
     return { userData } 
   }catch(err){
     throw new Error("can not get user");
