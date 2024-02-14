@@ -80,11 +80,6 @@ export default function LineChart({days, durations}) {
     .attr('x',paddingTop)
     .attr('dy', '1.2em')
 
-
-    // d3.select('.svgLine')
-    // .on("mouseout",(e,d)=>handlerMouseOut(e,d))
-    
-
     // -------------- draw line ------------------//
     // draw line
     svg.append('path')
@@ -100,8 +95,8 @@ export default function LineChart({days, durations}) {
     .attr('opacity',opacity)
     .attr('class','lineChart')
 
-    // -------------- draw ombre popup ----------
-
+   // --------------  popup ---------------------//
+   // draw ombre popup 
     svg.append('g')
     .selectAll()
     .data(daysExtend)
@@ -113,8 +108,7 @@ export default function LineChart({days, durations}) {
     .attr('fill','transparent')
     .attr('class',(d,i)=>`ombre_popup${i}`)
 
-
-    // -------------- draw circle and text popup ----------
+    //  get coordinates of all points in the cuvre 
     const getCuvrePointsCoordinates = ()=>{
       // get coordinates of points in curve corresponding to data points
       const curvePath = svg.select('.lineChart').attr('d');
@@ -128,71 +122,61 @@ export default function LineChart({days, durations}) {
           return acc;
         }
       },[{x:curvePointsArray[1].split(',')[0], y:curvePointsArray[1].split(',')[1]}]);
-      return {pointCoordinates}
-    }
-    const {pointCoordinates}=getCuvrePointsCoordinates();
 
-    // inner Circle
+      const pointInsideCoordinates = pointCoordinates.slice(1,pointCoordinates.length-1); // points in cuvre which is shown inside the graphique
+      return {pointInsideCoordinates}
+    }
+    const {pointInsideCoordinates}=getCuvrePointsCoordinates();
+    // draw inner Circle
     svg.append('g')
     .selectAll()
-    .data(daysExtend)
+    .data(days)
     .join('circle')
     .attr('cx',(d,i)=>{
-      return pointCoordinates[i].x
+      return pointInsideCoordinates[i].x
     })
     .attr('cy',(d,i)=>{
-      return pointCoordinates[i].y
+      return pointInsideCoordinates[i].y
     })
     .attr('r','5')
     .attr('fill','transparent')
     .attr('class',(d,i)=>`circleInner_popup${i}`)
 
-
-    // outer Circle
+    // draw outer Circle
     svg.append('g')
     .selectAll()
-    .data(daysExtend)
+    .data(days)
     .join('circle')
-    .attr('cx',(d,i)=>{
-      return pointCoordinates[i].x
-    })
-    .attr('cy',(d,i)=>{
-      return pointCoordinates[i].y
-    })
+    .attr('cx',(d,i)=> pointInsideCoordinates[i].x)
+    .attr('cy',(d,i)=> pointInsideCoordinates[i].y)
     .attr('r','10')
     .attr('fill','transparent')
     .attr('class',(d,i)=>`circleOuter_popup${i}`)
     .style('opacity',0.215)
 
-    // text 
+    // container for text and text
+    svg.append('g')
+    .selectAll()
+    .data(days)
+    .join('rect')
+    .attr('fill','#FFF')
+    .attr('class',(d,i)=>`infosContainer_popup${i}`)
 
-      const infosContainer = svg.append('g')
-      .selectAll()
-      .data(daysExtend)
-      .join('rect')
-      .attr('fill','#FFF')
-      .attr('class',(d,i)=>`infosContainer_popup${i}`)
+    svg.append('g')
+    .selectAll()
+    .data(days)
+    .join('text')
+    .attr('x',(d,i)=>pointInsideCoordinates[i].x)
+    .attr('y',(d,i)=>pointInsideCoordinates[i].y)
+    .attr('fill','black')
+    .text((d,i)=>`${durations[i]} min`)
+    .attr('text-anchor','middle')
+    .attr('font-size','1.5em')
+    .attr('font-weight','500')
+    .attr('opacity',0)
+    .attr('class',(d,i)=>`text_popup${i}`)
 
-      const text = svg.append('g')
-      .selectAll()
-      .data(daysExtend)
-      .join('text')
-      .attr('x',(d,i)=>{
-        return pointCoordinates[i].x
-      })
-      .attr('y',(d,i)=>{
-        return pointCoordinates[i].y
-      })
-      .attr('fill','black')
-      .text((d,i)=>`${durationExtend[i]} min`)
-      .attr('text-anchor','middle')
-      .attr('font-size','1.5em')
-      .attr('font-weight','500')
-      .attr('opacity',0)
-      .attr('class',(d,i)=>`text_popup${i}`)
-
-
-    //--------------add zone to trigger evenments------------//
+    //--------------add zone to trigger events------------//
     svg.append('g')
     .selectAll()
     .data(daysExtend)
@@ -208,125 +192,82 @@ export default function LineChart({days, durations}) {
     .attr('stroke', 'transparent')
     .attr('fill', 'transparent')
     .on("mousemove",(e,d)=>handlerMouseOver(e,d))
-    .on("mouseout",(e,d)=>handlerMouseOut(e,d))
+    .on("mouseout",()=>handlerMouseOut())
     
-    // add mouse event to svg
+    // handler mouse event  
 
+    const handlerMouseOut = ()=>{
+    
+      svg.selectAll("[class*='ombre_popup']")
+      .attr('fill','transparent');
 
-
-    const handlerMouseOut = (e,d)=>{
-      const index = daysExtend.indexOf(d);
-
-      d3.select(`.ombre_popup${index}`)
+      svg.selectAll("[class*='circleOuter_popup']")
       .attr('fill','transparent')
-      d3.select(`.circleOuter_popup${index}`)
-      .attr('fill','transparent')
-      .style('opacity',0.215)
-      d3.select(`.circleInner_popup${index}`)
-      .attr('fill','transparent')
+      .style('opacity',0.215);
 
-      d3.select(`.text_popup${index}`)
+      svg.selectAll("[class*='circleInner_popup']")
+      .attr('fill','transparent');
+
+      svg.selectAll("[class*='text_popup']")
       .attr('opacity',0);
-      
-      svg.selectAll(`.infosContainer_popup${index}`)
-      .attr('opacity',0)
 
-    }
+      svg.selectAll("[class*='infosContainer_popup']")
+      .attr('opacity',0);
 
-    const styleText = (index)=>{
-      d3.select(`.text_popup${index}`)
-      .attr('opacity',1)
-      const paddingText = 5;
-
-      const textBox =  svg.select(`.text_popup${index}`).node().getBBox(); // get x,y,hight, width of text already created
-
-      svg.select(`.infosContainer_popup${index}`)
-      .attr('x',pointCoordinates[index].x-textBox.width/2-paddingText)
-      .attr('y',textBox.y-paddingText)
-      .attr('width',textBox.width+2*paddingText)
-      .attr('height',textBox.height+2*paddingText)
-      .attr('opacity',1)
-
-      if(index==durationExtend.length-2||index==durationExtend.length-3){ // last right popup position
-        text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
-        infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
-      }else{
-        text.attr('transform',`translate(${textBox.width/2 + paddingText +5},-20)`)
-        infosContainer.attr('transform',`translate(${textBox.width/2 +paddingText+5},-20)`)
-      }
     }
 
     const handlerMouseOver =(e,d)=>{
       const index = daysExtend.indexOf(d);
-      console.log(index)
 
-      // d3.select(`.ombre_popup${index}`)
-      // .attr('fill','black')
-      // .style('opacity',0.0975)
-      // d3.select(`.circleOuter_popup${index}`)
-      // .attr('fill','white')
-      // .style('opacity',0.215)
-      // d3.select(`.circleInner_popup${index}`)
-      // .attr('fill','white')
+      if(index<=daysExtend.length-2&&index!=0){
+        styledBackgroundPopup(index);
+        styledTextPopup(index-1);
 
-      if(index==0){
-        d3.select(`.ombre_popup${index+1}`)
-        .attr('fill','black')
-        .style('opacity',0.0975)
-        d3.select(`.circleOuter_popup${index+1}`)
-        .attr('fill','white')
-        .style('opacity',0.215)
-        d3.select(`.circleInner_popup${index+1}`)
-        .attr('fill','white')
-
-        d3.select(`.text_popup${index}`)
-        .attr('opacity',1)
-
-        styleText(index+1);
-
-      }else{
-        d3.select(`.ombre_popup${index}`)
-        .attr('fill','black')
-        .style('opacity',0.0975)
-        d3.select(`.circleOuter_popup${index}`)
-        .attr('fill','white')
-        .style('opacity',0.215)
-        d3.select(`.circleInner_popup${index}`)
-        .attr('fill','white')
-
-        styleText(index);
+      }else if(index==0){
+        styledBackgroundPopup(index+1);
+        styledTextPopup(index);
       }
-
-      // if(index!==0||index!==daysExtend.length-1){
-  
-  
-      //   d3.select(`.text_popup${index}`)
-      //   .attr('opacity',1)
-      //   const paddingText = 5;
-  
-      //   const textBox =  svg.select(`.text_popup${index}`).node().getBBox(); // get x,y,hight, width of text already created
-  
-      //   svg.select(`.infosContainer_popup${index}`)
-      //   .attr('x',pointCoordinates[index].x-textBox.width/2-paddingText)
-      //   .attr('y',textBox.y-paddingText)
-      //   .attr('width',textBox.width+2*paddingText)
-      //   .attr('height',textBox.height+2*paddingText)
-      //   .attr('opacity',1)
-  
-      //   if(index==durationExtend.length-2||index==durationExtend.length-3){ // last right popup position
-      //     text.attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
-      //     infosContainer.attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
-      //   }else{
-      //     text.attr('transform',`translate(${textBox.width/2 + paddingText +5},-20)`)
-      //     infosContainer.attr('transform',`translate(${textBox.width/2 +paddingText+5},-20)`)
-      //   }
-  
-
-      // }
-      
-
     }
 
+    const styledTextPopup = (index)=>{
+      const paddingText = 5;
+
+      d3.select(`.text_popup${index}`)
+      .attr('opacity',1)
+
+      const textBox =  svg.select(`.text_popup${index}`).node().getBBox(); // get x,y,hight, width of text already created
+
+      svg.select(`.infosContainer_popup${index}`)
+      .attr('x',pointInsideCoordinates[index].x-textBox.width/2-paddingText)
+      .attr('y',textBox.y-paddingText)
+      .attr('width',textBox.width+2*paddingText)
+      .attr('height',textBox.height+2*paddingText)
+      .attr('opacity',1)
+      .attr('transform',`translate(20,-20)`)
+
+      if(index==durationExtend.length-3||index==durationExtend.length-4){ // two last right popup position
+        svg.select(`.text_popup${index}`)
+        .attr('transform',`translate(-${textBox.width/2 + paddingText +5},-20)`)
+        svg.select(`.infosContainer_popup${index}`)
+        .attr('transform',`translate(-${textBox.width/2 +paddingText+5},-20)`)
+      }else{
+        svg.select(`.text_popup${index}`)
+        .attr('transform',`translate(${textBox.width/2 + paddingText +5},-20)`)
+        svg.select(`.infosContainer_popup${index}`)
+        .attr('transform',`translate(${textBox.width/2 +paddingText+5},-20)`)
+      }
+    }
+
+    const styledBackgroundPopup = (index)=>{
+      d3.select(`.ombre_popup${index}`)
+      .attr('fill','black')
+      .style('opacity',0.0975)
+      d3.select(`.circleOuter_popup${index-1}`)
+      .attr('fill','white')
+      .style('opacity',0.215)
+      d3.select(`.circleInner_popup${index-1}`)
+      .attr('fill','white')
+    }
 
   },[days, durations])
   return (
